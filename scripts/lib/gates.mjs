@@ -43,8 +43,8 @@ function replaceAtomic(temp, target) {
 }
 
 const GATE_RE = /^- \[( |x|X)\] (.*)$/;
-const ATTR_RE = /^(\s+)(CHECK|EXPECT|EVIDENCE|CWD):\s?(.*)$/;
-const UNINDENTED_ATTR_RE = /^(CHECK|EXPECT|EVIDENCE|CWD):\s?(.*)$/;
+const ATTR_RE = /^(\s+)(CHECK|EXPECT|EVIDENCE|CWD|OWNER|SEVERITY|TAGS|FRESHNESS|DEADLINE|RISK|CATEGORY|OWNER_TEAM|REVIEWER|DEPENDS_ON|REQUIRES|REVIEW_WINDOW):\s?(.*)$/;
+const UNINDENTED_ATTR_RE = /^(CHECK|EXPECT|EVIDENCE|CWD|OWNER|SEVERITY|TAGS|FRESHNESS|DEADLINE|RISK|CATEGORY|OWNER_TEAM|REVIEWER|DEPENDS_ON|REQUIRES|REVIEW_WINDOW):\s?(.*)$/;
 const ABANDON_RE = /^ABANDON:\s*(\S*)\s*(.*)$/;
 const OWNS_RE = /^OWNS:\s*(.*)$/;
 const NEEDS_SCOPE_RE = /^NEEDS-SCOPE:\s*(.*)$/;
@@ -256,6 +256,29 @@ export function parseGates(text, options = {}) {
   if (options.requireGates !== false && gates.length === 0) errors.push("ledger contains zero live gates");
 
   return { lines, eol, finalNewline, gates, abandoned, owns, needsScope, errors, warnings };
+}
+
+export function parseMetadata(text, gate) {
+  const lines = String(text).split(/\r?\n/);
+  const result = {
+    owner: null, severity: "blocking", tags: [], freshness: null,
+    deadline: null, risk: null, category: null, ownerTeam: null,
+    reviewer: null, dependsOn: [], requires: [], reviewWindow: null,
+  };
+  for (let i = gate.line + 1; i < lines.length; i++) {
+    if (/^- \[( |x|X)\]/.test(lines[i])) break;
+    const match = lines[i].match(/^\s+(OWNER|SEVERITY|TAGS|FRESHNESS|DEADLINE|RISK|CATEGORY|OWNER_TEAM|REVIEWER|DEPENDS_ON|REQUIRES|REVIEW_WINDOW):\s*(.*)$/i);
+    if (!match) continue;
+    const key = match[1].toLowerCase();
+    const value = match[2].trim();
+    if (key === "tags") result.tags = value.split(",").map((x) => x.trim()).filter(Boolean);
+    else if (key === "depends_on") result.dependsOn = value.split(",").map((x) => x.trim()).filter(Boolean);
+    else if (key === "requires") result.requires = value.split(",").map((x) => x.trim()).filter(Boolean);
+    else if (key === "owner_team") result.ownerTeam = value;
+    else if (key === "review_window") result.reviewWindow = value;
+    else result[key] = value || null;
+  }
+  return result;
 }
 
 export function formatDocument(doc) {
