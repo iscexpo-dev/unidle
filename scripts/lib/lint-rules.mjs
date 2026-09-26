@@ -69,6 +69,52 @@ export function lintDocument(doc) {
       add("warn", id, "activity-not-outcome",
         'names an activity, not an outcome a stranger could judge: "' + title + '"');
     }
+
+    // Truthful-reporting guardrails: gates that could produce untruthful reports
+    // if the author writes a confident final report without re-measuring.
+
+    const completenessPatterns = [
+      /^everything (is|works|is done|works fine)/i,
+      /^all (done|complete|working|fixed|verified)/i,
+      /^fully (working|complete|done|verified)/i,
+      /^completely (done|fixed|working)/i,
+    ];
+    for (const pattern of completenessPatterns) {
+      if (pattern.test(title)) {
+        add("warn", id, "unverified-completeness",
+          'title claims completeness without evidence backing: "' + title + '"');
+      }
+    }
+
+    const narrowingPatterns = [
+      /^(only|just|mostly|primarily|basically) (the|our|this)/i,
+      /core (part|functionality)/i,
+      /works (for now|so far)/i,
+      /minus [^;]+/,
+      /except [^;]+/,
+    ];
+    for (const pattern of narrowingPatterns) {
+      if (pattern.test(title)) {
+        add("warn", id, "quiet-narrowing",
+          'title may indicate scope was narrowed to hide blocked work: "' + title + '"');
+      }
+    }
+
+    if (gate.evidence && gate.evidence !== "pending" && gate.evidence !== "") {
+      const genericEvidence = /exit=0|output=.*probe|shell=\/bin\/sh/i;
+      if (genericEvidence.test(gate.evidence) && !gate.check) {
+        add("warn", id, "generic-evidence",
+          "evidence is generic and may not actually verify the gate title");
+      }
+    }
+
+    if (check && expect && gate.evidence) {
+      const evidenceMatch = gate.evidence.match(/output=([^;]+)/);
+      if (evidenceMatch && evidenceMatch[1] === expect.trim()) {
+        add("warn", id, "evidence-echoes-check",
+          "EVIDENCE output matches EXPECT verbatim; the report may quote evidence that just echoed the command");
+      }
+    }
   }
 
   // references/gates.md: five-to-twelve gates per leaf is the useful range.
