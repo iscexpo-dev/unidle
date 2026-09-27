@@ -5,7 +5,11 @@
   "description": "Recursive task decomposition using full-budget Depth Trees.",
   "type": "module",
   "scripts": {
-    "test": "node tests/run-tests.mjs && node tests/hardening-tests.mjs && node tests/stress-tests.mjs && node tests/lint-tests.mjs && node tests/report-tests.mjs && node tests/diff-tests.mjs && node tests/needs-scope-tests.mjs && node tests/dashboard-tests.mjs && node tests/wizard-tests.mjs && node tests/nested-scope-tests.mjs && node tests/self-check.mjs"
+    "test": "node tests/run-tests.mjs && node tests/hardening-tests.mjs && node tests/stress-tests.mjs && node tests/lint-tests.mjs && node tests/report-tests.mjs && node tests/diff-tests.mjs && node tests/dashboard-tests.mjs && node tests/needs-scope-tests.mjs && node tests/nested-scope-tests.mjs && node tests/wizard-tests.mjs && node tests/self-check.mjs && node tests/advanced-status-tests.mjs && node tests/truthful-report-tests.mjs",
+    "status": "node scripts/unidle-status.mjs",
+    "trend": "node scripts/unidle-status.mjs --trend --format json",
+    "verify-report": "node scripts/gate-report-verify.mjs",
+    "lint": "node scripts/gate-lint.mjs"
   },
   "engines": {
     "node": ">=16"
