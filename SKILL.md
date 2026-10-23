@@ -102,6 +102,33 @@ Three companions keep the ledger honest. None of them execute checks; only `gate
 
 Re-measure every number and completion claim immediately before reporting. Use qualified ids such as `leaf-1.2.1:G3`. Report the measured met, unmet, and abandoned counts and surface every abandonment. Do not compose a done report while any required gate remains unmet.
 
+## Truthful-reporting contract
+
+A final report is truthful when every sentence can be traced back to evidence that actually exists. The report must never let a confident sentence outrun the evidence. Read [templates/report.md](templates/report.md) for the template.
+
+Verify the report against the ledgers before publishing it:
+
+```text
+node <skill-dir>/scripts/gate-report-verify.mjs --report REPORT.md --ledger GATES.md
+```
+
+The verifier checks:
+
+- **No shortened list**: Every gate from the ledger appears in the report. Remaining-work lists are complete, not silently trimmed.
+- **No quoted output that never ran**: Every quoted EVIDENCE line traces to a real `EVIDENCE:` line in a ledger.
+- **No hypothesis stated as fact**: Completion claims are backed by met gate evidence. Inferred or uncertain items are marked "inferred" or "uncertain".
+- **No hidden narrowing**: Blocked or abandoned gates are reported explicitly, not silently omitted because the list is long or the part was blocked.
+- **Counts verified**: Met, unmet, abandoned, and stale counts match `unidle-status --format json` output exactly.
+- **Abandonments surfaced**: Every `ABANDON:` line is reported with its reason.
+
+The gate linter also flags gate titles that could produce untruthful reports — claims of completeness, quiet scope narrowing, and generic evidence that echoes the command instead of proving the outcome:
+
+```text
+node <skill-dir>/scripts/gate-lint.mjs --strict GATES.md
+```
+
+Run `gate-report-verify.mjs` after every report and before every merge. Under `--strict`, any unverifiable claim is a hard failure. See [references/gates.md](references/gates.md) for the full format.
+
 ## Install the optional Claude Code Stop hook carefully
 
 Offer the hook once when structural stop enforcement would materially help. Never install it without the user's consent:
