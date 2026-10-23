@@ -4,7 +4,7 @@
 // Zero dependencies. Node 16+.
 
 import { readFileSync, existsSync, statSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { join, resolve, basename } from "node:path";
 import { parseGates, gateState, resolveTarget } from "./lib/gates.mjs";
 
 const HELP = `usage: gate-report-verify.mjs --report <file> [options]
@@ -160,7 +160,7 @@ function extractReportAbandonments(report) {
 function getActualLedgerState(ledgers) {
   const gates = [];
   for (const { file, doc } of ledgers) {
-    const stem = file.replace(/.*\//, "").replace(/\.md$/i, "");
+    const stem = basename(file.replace(/\\/g, "/")).replace(/\.md$/i, "");
     for (const gate of doc.gates) {
       const state = gateState(gate, doc.abandoned);
       gates.push({
