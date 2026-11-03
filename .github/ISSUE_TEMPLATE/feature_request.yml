@@ -1,0 +1,38 @@
+name: Feature request
+description: Suggest an idea or improvement for Unidle.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: Thank you for suggesting an improvement! Please provide enough detail to help us understand the use case.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe the problem or workflow gap you're experiencing.
+      placeholder: I find it difficult to...
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like to happen?
+      description: Describe the behavior or capability you would like to see.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe any workarounds or alternative solutions you've considered.
+    validations:
+      required: false
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add examples, screenshots, or other context that may help explain the request.
+    validations:
+      required: false
