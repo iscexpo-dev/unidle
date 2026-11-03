@@ -1,0 +1,67 @@
+name: Bug report
+description: Report a problem with an ISC Expo project or resource.
+title: "bug: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: "Thanks for helping improve ISC Expo. Do not include passwords, tokens, student IDs, or private personal information."
+  - type: input
+    id: affected_area
+    attributes:
+      label: Affected project or resource
+      description: Repository, page, workshop, or version.
+      placeholder: "workshops / topic / version"
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the problem. Keep this to safe, non-sensitive details.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+      description: Describe the expected behavior or result.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened instead?
+      description: Describe the actual behavior or result.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Project or resource version
+      description: Add a release, commit, or event date if applicable.
+      placeholder: "version, commit, or event date"
+    validations:
+      required: false
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Add the browser, device, operating system, or event context if relevant.
+      placeholder: "browser / device / operating system"
+    validations:
+      required: false
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Include only safe, non-sensitive details.
+    validations:
+      required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: Extra context
+      description: Screenshots or logs with secrets and personal information removed.
+    validations:
+      required: false
